@@ -32,6 +32,15 @@ github_username:  AntoninoScaffidi
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-polyglot
+
+# jekyll-polyglot settings
+# English is the default language and stays at the site root
+# (e.g. /2026/08/06/post.html); Italian is served under /it/.
+languages: ["en", "it"]
+default_lang: "en"
+exclude_from_localization: ["assets", "404.html"]
+parallel_localization: false
 
 # Exclude from processing.
 # The following items will not be processed, by default.
