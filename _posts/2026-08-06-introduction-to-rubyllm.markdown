@@ -6,6 +6,7 @@ episode: 1
 lang: en
 ref: introduction-to-rubyllm
 permalink: /2026/08/06/introduction-to-rubyllm/
+canonical_url: https://antoninoscaffidi.github.io/2026/08/06/introduction-to-rubyllm/
 date: 2026-08-06 18:00:00 +0200
 ---
 
@@ -67,4 +68,4 @@ puts response.content
 
 In the next episode of this series, we'll wire RubyLLM into a real Rails app and build a simple chatbot backed by ActiveRecord-stored conversation history. Later episodes will cover semantic search and tool calling — letting the model call into your own application code to fetch data or take actions.
 
-If you're following the **VicinoTe** series on this blog (a from-scratch Rails tutorial building a local services marketplace), this AI series will eventually connect back to it: VicinoTe's advanced module uses RubyLLM for exactly the features described above.
+This blog will soon kick off a new series called **VicinoTe** — a from-scratch Rails tutorial building a local services marketplace. This AI series will eventually connect back to it: VicinoTe's advanced module will use RubyLLM for exactly the features described above.
