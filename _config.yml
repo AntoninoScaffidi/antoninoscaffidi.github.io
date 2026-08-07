@@ -42,6 +42,14 @@ default_lang: "en"
 exclude_from_localization: ["assets", "404.html"]
 parallel_localization: false
 
+# Default social-share image (og:image / twitter:image) for any post or page
+# that doesn't set its own `image:` in front matter.
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /assets/images/social-default.png
+
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
