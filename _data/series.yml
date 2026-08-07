@@ -1,0 +1,14 @@
+vicinote:
+  name:
+    en: "VicinoTe"
+    it: "VicinoTe"
+  description:
+    en: "A from-scratch Rails tutorial building a local services marketplace, from the first `rails new` to an AI-powered advanced module."
+    it: "Un tutorial Rails da zero che costruisce un marketplace di servizi locali, dal primo `rails new` fino a un modulo avanzato basato sull'AI."
+ai-with-ruby:
+  name:
+    en: "AI with Ruby"
+    it: "AI con Ruby"
+  description:
+    en: "Bringing AI features into Ruby and Rails applications with RubyLLM: chatbots, semantic search, and tool calling."
+    it: "Portare funzionalità di AI nelle applicazioni Ruby e Rails con RubyLLM: chatbot, ricerca semantica e tool calling."
