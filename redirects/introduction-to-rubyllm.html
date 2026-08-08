@@ -1,0 +1,29 @@
+---
+# Redirect stub for the old dated URL of this post.
+# Polyglot renders this file once per language, prefixing the permalink with
+# /it/ on the Italian pass, so one file covers both old URLs. The target is
+# picked from site.active_lang so each language redirects to its own version.
+layout: null
+sitemap: false
+permalink: /2026/08/06/introduction-to-rubyllm/
+---
+{%- if site.active_lang == "it" -%}
+{%- assign target = "https://antoninoscaffidi.github.io/it/introduction-to-rubyllm/" -%}
+{%- assign label = "Introduzione a RubyLLM" -%}
+{%- else -%}
+{%- assign target = "https://antoninoscaffidi.github.io/introduction-to-rubyllm/" -%}
+{%- assign label = "Introduction to RubyLLM" -%}
+{%- endif -%}
+<!doctype html>
+<html lang="{{ site.active_lang }}">
+<head>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<link rel="canonical" href="{{ target }}">
+<meta http-equiv="refresh" content="0; url={{ target }}">
+<meta name="robots" content="noindex">
+</head>
+<body>
+<p><a href="{{ target }}">{{ label }}</a></p>
+</body>
+</html>

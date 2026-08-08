@@ -5,8 +5,8 @@ series: "ai-with-ruby"
 episode: 1
 lang: it
 ref: introduction-to-rubyllm
-permalink: /2026/08/06/introduction-to-rubyllm/
-canonical_url: https://antoninoscaffidi.github.io/it/2026/08/06/introduction-to-rubyllm/
+permalink: /introduction-to-rubyllm/
+canonical_url: https://antoninoscaffidi.github.io/it/introduction-to-rubyllm/
 date: 2026-08-06 18:00:00 +0200
 ---
 

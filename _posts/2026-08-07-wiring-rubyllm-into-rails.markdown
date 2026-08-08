@@ -5,8 +5,8 @@ series: "ai-with-ruby"
 episode: 2
 lang: en
 ref: wiring-rubyllm-into-rails
-permalink: /2026/08/07/wiring-rubyllm-into-rails/
-canonical_url: https://antoninoscaffidi.github.io/2026/08/07/wiring-rubyllm-into-rails/
+permalink: /wiring-rubyllm-into-rails/
+canonical_url: https://antoninoscaffidi.github.io/wiring-rubyllm-into-rails/
 date: 2026-08-07 12:00:00 +0200
 ---
 
