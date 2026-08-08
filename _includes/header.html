@@ -31,12 +31,16 @@
             polyglot from rewriting these two links — without it the "English"
             link on an Italian page would be rewritten back to /it/.
           {%- endcomment -%}
-          {%- if site.active_lang == site.default_lang -%}
-            {%- assign other_url = page.url | prepend: "/it" -%}
-            <a class="page-link lang-link" {% static_href %}href="{{ other_url }}"{% endstatic_href %} hreflang="it" lang="it">Italiano</a>
-          {%- else -%}
-            <a class="page-link lang-link" {% static_href %}href="{{ page.url }}"{% endstatic_href %} hreflang="en" lang="en">English</a>
-          {%- endif -%}
+          {%- assign it_url = page.url | prepend: "/it" -%}
+          <span class="lang-switch">
+            {%- if site.active_lang == site.default_lang -%}
+              <span class="lang-current" aria-current="true">EN</span>
+              <a {% static_href %}href="{{ it_url }}"{% endstatic_href %} hreflang="it" lang="it" title="Leggi in italiano">IT</a>
+            {%- else -%}
+              <a {% static_href %}href="{{ page.url }}"{% endstatic_href %} hreflang="en" lang="en" title="Read in English">EN</a>
+              <span class="lang-current" aria-current="true">IT</span>
+            {%- endif -%}
+          </span>
         </div>
       </nav>
     {%- endif -%}

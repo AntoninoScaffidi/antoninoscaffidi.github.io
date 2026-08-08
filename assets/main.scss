@@ -4,19 +4,38 @@
 
 @import "minima";
 
-// Language switcher: set apart from the regular nav links so it reads as a
-// control rather than another section of the site.
-.site-nav .lang-link {
-  color: $grey-color-dark;
+// Language switcher, styled as a two-segment toggle (EN | IT) so it reads as a
+// control rather than another nav section. The active language is a plain span,
+// the other one is the link.
+.lang-switch {
+  display: inline-flex;
+  align-items: stretch;
   border: 1px solid $grey-color-light;
   border-radius: 4px;
-  padding: 3px 10px;
-  font-size: $small-font-size;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  vertical-align: middle;
 
-  &:hover {
+  > * {
+    padding: 6px 10px;
+  }
+
+  .lang-current {
+    background-color: $grey-color-light;
     color: $text-color;
-    border-color: $grey-color;
-    text-decoration: none;
+  }
+
+  a {
+    color: $grey-color-dark;
+
+    &:hover {
+      background-color: rgba($grey-color-light, 0.45);
+      color: $text-color;
+      text-decoration: none;
+    }
   }
 }
 
@@ -68,11 +87,10 @@
       padding: 8px 0;
     }
 
-    // On mobile the menu is a stacked list, so the bordered pill would stretch
-    // the full width; keep it inline-sized instead.
-    .lang-link {
-      display: inline-block;
-      margin-top: 6px;
+    // On mobile the menu is a stacked list; keep the toggle inline-sized so it
+    // doesn't stretch across the full width.
+    .lang-switch {
+      margin-top: 8px;
     }
   }
 }
