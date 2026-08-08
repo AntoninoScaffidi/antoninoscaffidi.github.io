@@ -4,6 +4,22 @@
 
 @import "minima";
 
+// Language switcher: set apart from the regular nav links so it reads as a
+// control rather than another section of the site.
+.site-nav .lang-link {
+  color: $grey-color-dark;
+  border: 1px solid $grey-color-light;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: $small-font-size;
+
+  &:hover {
+    color: $text-color;
+    border-color: $grey-color;
+    text-decoration: none;
+  }
+}
+
 // Mobile nav override.
 //
 // Minima positions the mobile menu absolutely, so opening it overlays the page
@@ -50,6 +66,13 @@
     .page-link {
       margin-left: 0;
       padding: 8px 0;
+    }
+
+    // On mobile the menu is a stacked list, so the bordered pill would stretch
+    // the full width; keep it inline-sized instead.
+    .lang-link {
+      display: inline-block;
+      margin-top: 6px;
     }
   }
 }
