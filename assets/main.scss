@@ -1,0 +1,55 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+
+@import "minima";
+
+// Mobile nav override.
+//
+// Minima positions the mobile menu absolutely, so opening it overlays the page
+// title and the start of the content. Here the header becomes a flex row and
+// the nav uses `display: contents`, which promotes its children to flex items
+// of the header itself. The open menu then wraps onto its own full-width line
+// and pushes the content down instead of covering it.
+@include media-query($on-palm) {
+  .site-header .wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .site-title {
+    float: none;
+    margin-right: auto;
+  }
+
+  .site-nav {
+    display: contents;
+
+    label[for="nav-trigger"] {
+      float: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-icon {
+      float: none;
+      padding-top: 0;
+    }
+
+    input:checked ~ .trigger {
+      display: block;
+      flex-basis: 100%;
+      text-align: left;
+      padding: 5px 0 10px;
+      border-top: 1px solid $grey-color-light;
+      margin-top: 5px;
+    }
+
+    .page-link {
+      margin-left: 0;
+      padding: 8px 0;
+    }
+  }
+}
