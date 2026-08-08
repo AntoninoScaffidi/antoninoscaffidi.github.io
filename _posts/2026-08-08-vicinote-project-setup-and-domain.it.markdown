@@ -8,6 +8,7 @@ ref: vicinote-project-setup-and-domain
 permalink: /vicinote-project-setup-and-domain/
 canonical_url: https://antoninoscaffidi.github.io/it/vicinote-project-setup-and-domain/
 date: 2026-08-08 10:00:00 +0200
+image: /assets/images/vicinote-banner.png
 ---
 
 Questo è il primo episodio di **VicinoTe**, una serie in cui costruiamo un'applicazione Rails completa partendo da una cartella vuota, fino ad arrivare — negli episodi finali — a un modulo di AI basato su RubyLLM.
