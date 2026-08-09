@@ -39,94 +39,81 @@
   }
 }
 
-// Desktop/tablet header: stack the title above the nav instead of trying to
-// fit them side by side. Minima floats title left and nav right within an
-// 800px wrapper — fine for one short nav item, but three series pages plus
-// the language toggle overflow that width and wrap onto their own line
-// anyway, landing right-aligned under the title instead of centered under
-// it. Making the two-row layout deliberate keeps it looking intentional no
-// matter how many series get added later.
-@media screen and (min-width: $on-palm) {
-  .site-header .wrapper {
+// Always-on hamburger nav.
+//
+// Minima only collapses the nav into a hamburger below 600px; above that it
+// tries to fit every page-link inline next to the title, which breaks down
+// once there are enough series (that's what the two-row wrapping was).
+// Using the same collapsed menu at every width keeps the header to one
+// predictable row regardless of how many series/pages exist. The panel
+// pushes the rest of the page down when open (a normal-flow flex item that
+// wraps onto its own line) rather than floating over the content below it.
+.site-header .wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.site-title {
+  float: none;
+  margin-right: auto;
+}
+
+.site-nav {
+  float: none;
+  // Lifts the label/menu-icon/trigger out as direct flex items of the
+  // wrapper above, so .trigger can take flex-basis: 100% and wrap onto its
+  // own full-width row when open.
+  display: contents;
+
+  .nav-trigger {
+    display: none;
+  }
+
+  label[for="nav-trigger"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+  }
+
+  .menu-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > svg {
+      fill: $grey-color-dark;
+    }
+  }
+
+  .trigger {
+    display: none;
+  }
+
+  input:checked ~ .trigger {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .site-title {
-    float: none;
-    margin-bottom: 6px;
-  }
-
-  .site-nav {
-    float: none;
+    flex-basis: 100%;
     width: 100%;
-
-    .trigger {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      row-gap: 8px;
-    }
-
-    .lang-switch {
-      margin-left: auto;
-    }
-  }
-}
-
-// Mobile nav override.
-//
-// Minima positions the mobile menu absolutely, so opening it overlays the page
-// title and the start of the content. Here the header becomes a flex row and
-// the nav uses `display: contents`, which promotes its children to flex items
-// of the header itself. The open menu then wraps onto its own full-width line
-// and pushes the content down instead of covering it.
-@include media-query($on-palm) {
-  .site-header .wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    padding: 10px 0 16px;
+    border-top: 1px solid $grey-color-light;
+    margin-top: 8px;
   }
 
-  .site-title {
-    float: none;
-    margin-right: auto;
+  .page-link {
+    margin: 0;
+    padding: 6px 0;
+
+    &:not(:last-child) {
+      margin-right: 0;
+    }
   }
 
-  .site-nav {
-    display: contents;
-
-    label[for="nav-trigger"] {
-      float: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .menu-icon {
-      float: none;
-      padding-top: 0;
-    }
-
-    input:checked ~ .trigger {
-      display: block;
-      flex-basis: 100%;
-      text-align: left;
-      padding: 5px 0 10px;
-      border-top: 1px solid $grey-color-light;
-      margin-top: 5px;
-    }
-
-    .page-link {
-      margin-left: 0;
-      padding: 8px 0;
-    }
-
-    // On mobile the menu is a stacked list; keep the toggle inline-sized so it
-    // doesn't stretch across the full width.
-    .lang-switch {
-      margin-top: 8px;
-    }
+  .lang-switch {
+    margin-top: 8px;
   }
 }
