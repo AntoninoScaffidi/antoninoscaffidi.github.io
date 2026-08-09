@@ -39,6 +39,42 @@
   }
 }
 
+// Desktop/tablet header: stack the title above the nav instead of trying to
+// fit them side by side. Minima floats title left and nav right within an
+// 800px wrapper — fine for one short nav item, but three series pages plus
+// the language toggle overflow that width and wrap onto their own line
+// anyway, landing right-aligned under the title instead of centered under
+// it. Making the two-row layout deliberate keeps it looking intentional no
+// matter how many series get added later.
+@media screen and (min-width: $on-palm) {
+  .site-header .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-title {
+    float: none;
+    margin-bottom: 6px;
+  }
+
+  .site-nav {
+    float: none;
+    width: 100%;
+
+    .trigger {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      row-gap: 8px;
+    }
+
+    .lang-switch {
+      margin-left: auto;
+    }
+  }
+}
+
 // Mobile nav override.
 //
 // Minima positions the mobile menu absolutely, so opening it overlays the page
