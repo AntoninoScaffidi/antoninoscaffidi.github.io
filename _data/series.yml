@@ -12,3 +12,10 @@ ai-with-ruby:
   description:
     en: "Bringing AI features into Ruby and Rails applications with RubyLLM: chatbots, semantic search, and tool calling."
     it: "Portare funzionalità di AI nelle applicazioni Ruby e Rails con RubyLLM: chatbot, ricerca semantica e tool calling."
+ruby-deep-dive:
+  name:
+    en: "Ruby Deep Dive"
+    it: "Ruby Deep Dive"
+  description:
+    en: "A from-scratch look at the Ruby language itself, not a framework — with hands-on exercises for every episode."
+    it: "Uno sguardo da zero al linguaggio Ruby in sé, non a un framework — con esercizi pratici per ogni episodio."
