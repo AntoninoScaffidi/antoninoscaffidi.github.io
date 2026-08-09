@@ -8,6 +8,7 @@ ref: wiring-rubyllm-into-rails
 permalink: /wiring-rubyllm-into-rails/
 canonical_url: https://antoninoscaffidi.github.io/wiring-rubyllm-into-rails/
 date: 2026-08-07 12:00:00 +0200
+image: /assets/images/ai-with-ruby-banner.png
 ---
 
 In [episode 1]({% post_url 2026-08-06-introduction-to-rubyllm %}) we installed RubyLLM and made a single call from plain Ruby. This time we wire it into an actual Rails app: a form where you type a message and get a response back from the model. No database, no conversation history yet — that's episode 3. The goal here is just to see RubyLLM working inside a real Rails request/response cycle.

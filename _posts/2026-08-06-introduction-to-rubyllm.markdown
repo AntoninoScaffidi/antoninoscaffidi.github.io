@@ -8,6 +8,7 @@ ref: introduction-to-rubyllm
 permalink: /introduction-to-rubyllm/
 canonical_url: https://antoninoscaffidi.github.io/introduction-to-rubyllm/
 date: 2026-08-06 18:00:00 +0200
+image: /assets/images/ai-with-ruby-banner.png
 ---
 
 If you've built anything with Ruby on Rails over the last couple of years, you've probably felt the pull toward adding some kind of AI feature: a chatbot, a semantic search box, a tool that lets an LLM call into your app's own logic. The Python ecosystem has had mature tooling for this for a while. Ruby, for a long time, did not.

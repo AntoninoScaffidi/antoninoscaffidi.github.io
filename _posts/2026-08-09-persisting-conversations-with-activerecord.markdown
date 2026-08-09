@@ -8,6 +8,7 @@ ref: persisting-conversations-with-activerecord
 permalink: /persisting-conversations-with-activerecord/
 canonical_url: https://antoninoscaffidi.github.io/persisting-conversations-with-activerecord/
 date: 2026-08-09 06:00:00 +0200
+image: /assets/images/ai-with-ruby-banner.png
 ---
 
 In [episode 2]({% post_url 2026-08-07-wiring-rubyllm-into-rails %}) we got RubyLLM talking to Rails through a plain form: type a message, get a reply, refresh the page and it's gone. Every `RubyLLM.chat` call created a brand new, in-memory session that lived only for the duration of that one request.

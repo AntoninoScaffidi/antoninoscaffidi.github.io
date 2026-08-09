@@ -6,4 +6,5 @@ lang: en
 ref: series-ai-with-ruby
 permalink: /series/ai-with-ruby/
 canonical_url: https://antoninoscaffidi.github.io/series/ai-with-ruby/
+image: /assets/images/ai-with-ruby-banner.png
 ---
