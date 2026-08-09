@@ -29,7 +29,7 @@ Un marketplace di servizi li tocca tutti, e lo fa in modo graduale: puoi avere q
 rails new vicinote-tutorial -d postgresql --css tailwind
 ```
 
-In quella riga ci sono tre decisioni, quindi rendiamole esplicite.
+Questo comando racchiude tre decisioni, vediamole una per una.
 
 **`-d postgresql`.** Rails 8 usa SQLite di default, che oggi è davvero una buona scelta. Opto comunque per PostgreSQL per una ragione precisa: gli episodi sull'AI più avanti in questa serie hanno bisogno della **ricerca vettoriale** per la ricerca semantica sui servizi. Il modo standard di farlo in Postgres è l'estensione `pgvector`, e potervi accedere senza dover migrare il database a metà serie vale il piccolo lavoro in più adesso.
 
