@@ -19,3 +19,10 @@ ruby-deep-dive:
   description:
     en: "A from-scratch look at the Ruby language itself, not a framework — with hands-on exercises for every episode."
     it: "Uno sguardo da zero al linguaggio Ruby in sé, non a un framework — con esercizi pratici per ogni episodio."
+whatsapp-with-rails:
+  name:
+    en: "WhatsApp with Rails"
+    it: "WhatsApp con Rails"
+  description:
+    en: "Sending WhatsApp messages from a Rails app — first via Twilio, then via a direct Meta WhatsApp Cloud API variant for comparison."
+    it: "Inviare messaggi WhatsApp da un'app Rails — prima via Twilio, poi con una variante diretta con le API Meta WhatsApp Cloud, per confronto."
