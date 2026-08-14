@@ -64,6 +64,8 @@ end
 
 `has_secure_password` is the one line doing the heavy lifting, and it's not a Devise-style black box — it's plain Rails, from `ActiveModel::SecurePassword`. It expects a `password_digest` column, adds `password=`/`password_confirmation=` virtual attributes that hash with bcrypt on assignment, and adds an `authenticate` instance method. We'll come back to it below, because it does more than that — the password reset mechanism later in this post comes from the exact same line.
 
+(Worth being precise about one thing: `has_secure_password` itself is Rails code, part of the `activemodel` gem — not part of `bcrypt`. The `bcrypt` gem in the Gemfile only supplies the `BCrypt::Password` class Rails uses internally to actually hash and compare passwords; the macro, the validations, and the reset-token logic all live in Rails itself, readable like any other framework code.)
+
 `normalizes :email_address` is a smaller but genuinely useful Rails feature: it guarantees `"Mario@Example.com "` and `"mario@example.com"` are treated as the same address everywhere — on save, and on every subsequent lookup — without us having to remember to call `.downcase.strip` by hand at every call site.
 
 ```ruby
