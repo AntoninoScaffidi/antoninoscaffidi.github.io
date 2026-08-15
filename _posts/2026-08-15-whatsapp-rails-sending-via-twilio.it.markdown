@@ -7,7 +7,7 @@ lang: it
 ref: whatsapp-rails-sending-via-twilio
 permalink: /whatsapp-rails-sending-via-twilio/
 canonical_url: https://antoninoscaffidi.github.io/it/whatsapp-rails-sending-via-twilio/
-image: /assets/images/whatsapp-with-rails-banner.png
+image: /assets/images/whatsapp-with-rails-ep2-banner.png
 date: 2026-08-15 09:00:00 +0200
 ---
 
