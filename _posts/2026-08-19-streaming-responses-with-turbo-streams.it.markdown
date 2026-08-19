@@ -8,7 +8,7 @@ ref: streaming-responses-with-turbo-streams
 permalink: /streaming-responses-with-turbo-streams/
 canonical_url: https://antoninoscaffidi.github.io/it/streaming-responses-with-turbo-streams/
 date: 2026-08-19 07:00:00 +0200
-image: /assets/images/ai-with-ruby-banner.png
+image: /assets/images/ai-with-ruby-ep4-banner.png
 ---
 
 Nell'[episodio 3]({% post_url 2026-08-09-persisting-conversations-with-activerecord %}) le conversazioni avevano iniziato a sopravvivere a un refresh della pagina, ma la richiesta in sé restava una scatola nera: premi Invia, e l'intera pagina resta lì ferma — nessuno spinner, niente — finché l'intera risposta non torna dal modello, e solo allora la pagina reindirizza e la mostra, tutta insieme. Per una risposta di una frase sono uno o due secondi di nulla. Per una più lunga, possono essere cinque, sei secondi di una pagina che sembra bloccata.

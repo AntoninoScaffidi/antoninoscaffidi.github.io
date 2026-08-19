@@ -8,7 +8,7 @@ ref: streaming-responses-with-turbo-streams
 permalink: /streaming-responses-with-turbo-streams/
 canonical_url: https://antoninoscaffidi.github.io/streaming-responses-with-turbo-streams/
 date: 2026-08-19 07:00:00 +0200
-image: /assets/images/ai-with-ruby-banner.png
+image: /assets/images/ai-with-ruby-ep4-banner.png
 ---
 
 In [episode 3]({% post_url 2026-08-09-persisting-conversations-with-activerecord %}) conversations started surviving a page refresh, but the request itself was still a black box: you hit Send, the whole page just sat there — no spinner, nothing — until the entire reply had come back from the model, and only then did the page redirect and show it, all at once. For a one-sentence answer that's a second or two of nothing. For a longer one, it can be five, six seconds of a page that looks frozen.
