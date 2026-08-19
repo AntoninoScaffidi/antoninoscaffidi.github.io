@@ -5,6 +5,28 @@
     {%- assign page_paths = site.header_pages | default: default_paths -%}
     <a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
 
+    {%- comment -%}
+      Language switcher. page.url is always the un-prefixed path (polyglot
+      adds the /it/ prefix when it rewrites the rendered output), so the
+      other language's URL can be derived from it. static_href stops
+      polyglot from rewriting these two links — without it the "English"
+      link on an Italian page would be rewritten back to /it/.
+
+      Rendered twice: this copy sits directly in the header row and is
+      shown only from 801px up (see main.scss); the second copy further
+      down, inside the hamburger .trigger, covers narrower widths.
+    {%- endcomment -%}
+    {%- assign it_url = page.url | prepend: "/it" -%}
+    <span class="lang-switch lang-switch--desktop">
+      {%- if site.active_lang == site.default_lang -%}
+        <span class="lang-current" aria-current="true">EN</span>
+        <a {% static_href %}href="{{ it_url }}"{% endstatic_href %} hreflang="it" lang="it" title="Leggi in italiano">IT</a>
+      {%- else -%}
+        <a {% static_href %}href="{{ page.url }}"{% endstatic_href %} hreflang="en" lang="en" title="Read in English">EN</a>
+        <span class="lang-current" aria-current="true">IT</span>
+      {%- endif -%}
+    </span>
+
     {%- if page_paths -%}
       <nav class="site-nav">
         <input type="checkbox" id="nav-trigger" class="nav-trigger" />
@@ -24,14 +46,6 @@
             {%- endif -%}
           {%- endfor -%}
 
-          {%- comment -%}
-            Language switcher. page.url is always the un-prefixed path (polyglot
-            adds the /it/ prefix when it rewrites the rendered output), so the
-            other language's URL can be derived from it. static_href stops
-            polyglot from rewriting these two links — without it the "English"
-            link on an Italian page would be rewritten back to /it/.
-          {%- endcomment -%}
-          {%- assign it_url = page.url | prepend: "/it" -%}
           <span class="lang-switch">
             {%- if site.active_lang == site.default_lang -%}
               <span class="lang-current" aria-current="true">EN</span>

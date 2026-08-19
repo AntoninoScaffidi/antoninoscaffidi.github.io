@@ -39,6 +39,26 @@
   }
 }
 
+// Desktop copy of the switcher (see header.html) sits in the header row
+// itself instead of behind the hamburger, since screens this wide have
+// room for it. Below $on-laptop it stays hidden and the copy inside
+// .trigger (styled further down) takes over.
+.lang-switch--desktop {
+  display: none;
+}
+
+@media screen and (min-width: $on-laptop + 1) {
+  .lang-switch--desktop {
+    display: inline-flex;
+    margin-right: 12px;
+  }
+
+  // Avoid showing the switcher twice if the hamburger is opened at this width.
+  .site-nav .trigger .lang-switch {
+    display: none;
+  }
+}
+
 // Always-on hamburger nav.
 //
 // Minima only collapses the nav into a hamburger below 600px; above that it
