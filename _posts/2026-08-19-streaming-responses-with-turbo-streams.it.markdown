@@ -208,7 +208,7 @@ resource :chat, only: [:new, :create, :destroy]
 
 Questo è **l'intero** corpo della risposta HTTP a una `POST /chat` ora. Non tocca affatto la conversazione o i messaggi — il suo unico compito è sostituire con un form nuovo e vuoto, così la textarea si svuota da sola dopo l'invio. Tutto il resto succede più tardi, sulla connessione cable, dal job in background.
 
-Il form stesso è stato spostato nella sua partial, così sia questa risposta sia la pagina iniziale possono renderizzarlo:
+Il form stesso è stato spostato nel suo partial, così sia questa risposta sia la pagina iniziale possono renderizzarlo:
 
 ```erb
 <%# app/views/chats/_form.html.erb %>
@@ -235,7 +235,7 @@ L'`id="new_message"` sul `div` che avvolge tutto è ciò che `turbo_stream.repla
 
 ## Bug #1: renderizzare i messaggi per ruolo, e un nome di variabile che cambia sotto i piedi
 
-La view dell'episodio 3 scorreva `@conversation.messages` a mano e diramava su `message.role` inline per scegliere lo stile. Non funziona più nel momento in cui altro codice — `broadcasts_to` — deve renderizzare un `Message` da solo, senza il ciclo della nostra view intorno. Quindi questo episodio sposta il rendering in delle partial, e `render @conversation.messages` usa la convenzione standard di Rails "una partial per record": per un `Message`, normalmente significherebbe `messages/_message.html.erb`. Ho scritto esattamente quella partial per primo, e ho ottenuto questo:
+La view dell'episodio 3 scorreva `@conversation.messages` a mano e diramava su `message.role` inline per scegliere lo stile. Non funziona più nel momento in cui altro codice — `broadcasts_to` — deve renderizzare un `Message` da solo, senza il ciclo della nostra view intorno. Quindi questo episodio sposta il rendering in dei partial, e `render @conversation.messages` usa la convenzione standard di Rails "un partial per record": per un `Message`, normalmente significherebbe `messages/_message.html.erb`. Ho scritto esattamente quel partial per primo, e ho ottenuto questo:
 
 ```
 ActionView::MissingTemplate in Chats#new
@@ -258,7 +258,7 @@ def to_partial_path
 end
 ```
 
-RubyLLM sovrascrive `to_partial_path` così che un `Message` scelga la propria partial in base al ruolo — `messages/user`, `messages/assistant`, e così via. È esattamente per questo che il generator ufficiale include partial separate `_user.html.erb`, `_assistant.html.erb`, `_system.html.erb`, `_tool.html.erb` invece di una sola generica: deve, questa sovrascrittura lo impone. Quindi la correzione è stata rinominare il file — `messages/_user.html.erb` e `messages/_assistant.html.erb` — non cambiare nulla nella chiamata di render.
+RubyLLM sovrascrive `to_partial_path` così che un `Message` scelga il proprio partial in base al ruolo — `messages/user`, `messages/assistant`, e così via. È esattamente per questo che il generator ufficiale include partial separati `_user.html.erb`, `_assistant.html.erb`, `_system.html.erb`, `_tool.html.erb` invece di uno solo generico: deve, questa sovrascrittura lo impone. Quindi la correzione è stata rinominare il file — `messages/_user.html.erb` e `messages/_assistant.html.erb` — non cambiare nulla nella chiamata di render.
 
 Questo ha risolto l'errore di template mancante, ma non la pagina. Ricaricando è comparso un errore diverso:
 
@@ -267,16 +267,16 @@ NameError in Chats#new
 undefined local variable or method 'user' for an instance of #<Class:0x...>
 ```
 
-Avevo scritto la partial aspettandomi una locale chiamata `message` (il nome naturale, coerente con la variabile usata ovunque altrove in questa app):
+Avevo scritto il partial aspettandomi una locale chiamata `message` (il nome naturale, coerente con la variabile usata ovunque altrove in questa app):
 
 ```erb
 <div id="<%= dom_id(message) %>" class="text-right">
   ...
 ```
 
-Ma quando Rails renderizza una partial risolta tramite `to_partial_path`, chiama la variabile locale come la **partial**, non come la classe — per `messages/_user.html.erb`, quella è `user`, non `message`. Ho corretto il nome e sono andato avanti, convinto che la storia finisse lì. Non era così.
+Ma quando Rails renderizza un partial risolto tramite `to_partial_path`, chiama la variabile locale come il **partial**, non come la classe — per `messages/_user.html.erb`, quella è `user`, non `message`. Ho corretto il nome e sono andato avanti, convinto che la storia finisse lì. Non era così.
 
-## Bug #2: la stessa partial, renderizzata in due modi diversi, con due nomi di variabile diversi
+## Bug #2: lo stesso partial, renderizzato in due modi diversi, con due nomi di variabile diversi
 
 Dopo quella correzione sembrava tutto a posto — finché non ho davvero inviato un messaggio e ho visto i broadcast **live** (quelli innescati da `broadcasts_to`, non il render iniziale della pagina) esplodere nel log del server:
 
@@ -286,9 +286,9 @@ ActionView::Template::Error (undefined local variable or method 'user' for an in
 app/views/messages/_user.html.erb:2
 ```
 
-Stesso errore, stesso file — ma il render iniziale della pagina, pochi istanti prima nello stesso identico log, aveva funzionato bene con la stessa identica partial. Due percorsi di codice diversi stavano renderizzando `messages/_user.html.erb` con due insiemi diversi di variabili locali. `render @conversation.messages` (una collection) deduce il nome della locale dal percorso della partial risolta — `user`. Ma il callback `after_update_commit` di `broadcasts_to` (quello innescato dall'aggiornamento incidentale di `content_raw` dentro `add_message`, menzionato sopra) chiama `broadcast_replace_later_to`, che renderizza la stessa partial con `locals: {message: ...}` esplicito — la locale prende il nome dalla **classe del modello**, non dalla partial.
+Stesso errore, stesso file — ma il render iniziale della pagina, pochi istanti prima nello stesso identico log, aveva funzionato bene con lo stesso identico partial. Due percorsi di codice diversi stavano renderizzando `messages/_user.html.erb` con due insiemi diversi di variabili locali. `render @conversation.messages` (una collection) deduce il nome della locale dal percorso del partial risolto — `user`. Ma il callback `after_update_commit` di `broadcasts_to` (quello innescato dall'aggiornamento incidentale di `content_raw` dentro `add_message`, menzionato sopra) chiama `broadcast_replace_later_to`, che renderizza lo stesso partial con `locals: {message: ...}` esplicito — la locale prende il nome dalla **classe del modello**, non dal partial.
 
-Stessa partial, due chiamanti, due nomi di variabile locale diversi per lo stesso identico oggetto. La correzione è una prima riga difensiva, che legge quale delle due è effettivamente presente:
+Stesso partial, due chiamanti, due nomi di variabile locale diversi per lo stesso identico oggetto. La correzione è una prima riga difensiva, che legge quale delle due è effettivamente presente:
 
 ```erb
 <%# app/views/messages/_user.html.erb %>
@@ -312,7 +312,7 @@ Stessa partial, due chiamanti, due nomi di variabile locale diversi per lo stess
 </div>
 ```
 
-È esattamente la forma del fallback nella partial generata da RubyLLM stesso (`assistant ||= local_assigns[:message]`) — non ne avevo notato il motivo finché non ho sbattuto contro lo stesso muro io stesso. Leggere codice generato prima di averne bisogno e leggerlo **dopo** che ti ha appena rotto la pagina insegnano lezioni molto diverse; questa è stata la seconda.
+È esattamente la forma del fallback nel partial generato da RubyLLM stesso (`assistant ||= local_assigns[:message]`) — non ne avevo notato il motivo finché non ho sbattuto contro lo stesso muro io stesso. Leggere codice generato prima di averne bisogno e leggerlo **dopo** che ti ha appena rotto la pagina insegnano lezioni molto diverse; questa è stata la seconda.
 
 Il contenitore di cui ha bisogno il `render @conversation.messages` iniziale, e che l'append di `broadcasts_to` alla creazione (target di default `model_name.plural`, `"messages"`) deve trovare già presente in pagina:
 
@@ -325,7 +325,7 @@ Il contenitore di cui ha bisogno il `render @conversation.messages` iniziale, e 
 
 ## Bug #3 (quello vero): due nomi diversi per lo stesso stream
 
-Con entrambe le partial corrette, ho ricaricato, inviato un messaggio, e — niente. Nessun errore da nessuna parte. Il form si svuotava (quindi la risposta `turbo_stream` di `create` aveva funzionato). Ma nessun fumetto utente, nessun fumetto assistant, nemmeno dopo diversi secondi, nemmeno dopo che il job in background aveva chiaramente finito (potevo vedere la risposta completa, salvata correttamente, ricaricando la pagina).
+Con entrambi i partial corretti, ho ricaricato, inviato un messaggio, e — niente. Nessun errore da nessuna parte. Il form si svuotava (quindi la risposta `turbo_stream` di `create` aveva funzionato). Ma nessun fumetto utente, nessun fumetto assistant, nemmeno dopo diversi secondi, nemmeno dopo che il job in background aveva chiaramente finito (potevo vedere la risposta completa, salvata correttamente, ricaricando la pagina).
 
 Il log di Rails raccontava una storia **completamente pulita**: il job girava, `conversation.ask` creava entrambe le righe, ogni `Turbo::Streams::ActionBroadcastJob` veniva eseguito con successo, e riga dopo riga di `[ActionCable] Broadcasting to conversation_7: ...` mostrava ogni singolo chunk uscire, fino all'ultimissimo. Lato server, tutto funzionava. Il browser semplicemente non riceveva mai nulla.
 
