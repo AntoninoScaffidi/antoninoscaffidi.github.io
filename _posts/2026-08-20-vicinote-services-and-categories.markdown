@@ -8,7 +8,7 @@ ref: vicinote-services-and-categories
 permalink: /vicinote-services-and-categories/
 canonical_url: https://antoninoscaffidi.github.io/vicinote-services-and-categories/
 date: 2026-08-20 07:00:00 +0200
-image: /assets/images/vicinote-banner.png
+image: /assets/images/vicinote-ep3-banner.png
 ---
 
 [Episode 2]({% post_url 2026-08-13-vicinote-authentication-with-rails-8 %}) got accounts working end to end — sign up, sign in, sign out, password reset — and left it there deliberately: nothing touched `Service` or `Booking` yet. This episode is where the marketplace actually starts being a marketplace: a signed-in user can list something they offer, and anyone can browse what's listed.

@@ -8,7 +8,7 @@ ref: vicinote-services-and-categories
 permalink: /vicinote-services-and-categories/
 canonical_url: https://antoninoscaffidi.github.io/it/vicinote-services-and-categories/
 date: 2026-08-20 07:00:00 +0200
-image: /assets/images/vicinote-banner.png
+image: /assets/images/vicinote-ep3-banner.png
 ---
 
 L'[episodio 2]({% post_url 2026-08-13-vicinote-authentication-with-rails-8 %}) aveva fatto funzionare gli account da capo a fondo — registrazione, accesso, disconnessione, reset della password — e si era fermato lì di proposito: nulla toccava ancora `Service` o `Booking`. Questo episodio è dove il marketplace inizia davvero a essere un marketplace: un utente autenticato può elencare qualcosa che offre, e chiunque può sfogliare cosa è elencato.
