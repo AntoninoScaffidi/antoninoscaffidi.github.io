@@ -33,7 +33,7 @@ app/controllers/services_controller.rb nuovo — index (pubblico), new, create (
 app/views/services/index.html.erb     nuovo — la pagina di elenco
 app/views/services/new.html.erb       nuovo — il form "offri un servizio"
 config/routes.rb                      modifica — resources :services, only: [:index, :new, :create]
-config/locales/en.yml                 modifica — corregge un nome di attributo interno trapelato nei messaggi d'errore
+config/locales/en.yml                 modifica — corregge un nome di attributo interno trapelato nei messaggi d'errore, imposta l'euro come valuta di default
 db/seeds.rb                           modifica — la lista fissa di categorie
 app/views/pages/home.html.erb         modifica — i due bottoni placeholder ora portano da qualche parte
 ```
@@ -184,7 +184,7 @@ class Service < ApplicationRecord
 
   # price_cents è ciò che viene salvato e confrontato (niente sorprese di
   # arrotondamento con i float), ma nessuno vuole scrivere i centesimi in
-  # un form. Questo parla in dollari in entrata e in uscita, così il campo
+  # un form. Questo parla in euro in entrata e in uscita, così il campo
   # del form può semplicemente essere "price".
   def price
     price_cents && price_cents / 100.0
@@ -198,13 +198,13 @@ end
 
 - `validates :title, presence: true` / `validates :description, presence: true` — stesso ragionamento di `Category#name`: il `null: false` della migrazione è l'ultima linea di difesa, questa è quella amichevole che gira per prima.
 - `validates :price_cents, presence: true, numericality: { greater_than: 0, only_integer: true }` — tre controlli in un'unica riga. `presence: true` rifiuta `nil`. `numericality:` da sola rifiuterebbe solo qualcosa che non è affatto un numero (una stringa come `"abc"`); l'opzione `greater_than: 0` aggiunge la regola di business che un servizio gratuito non è qualcosa che questa validazione permette, e `only_integer: true` rifiuta centesimi frazionari (`4250.5`), cosa che non dovrebbe comunque essere raggiungibile dato che `price_cents` è una colonna database `integer`, ma la validazione rende la regola esplicita invece di affidarsi solo al tipo di colonna per imporla prima che il valore raggiunga il database.
-- `def price` / `def price=` — trattati per intero nella prossima sezione; è il pezzo che permette a un form di parlare in dollari mentre la colonna sotto resta in centesimi.
+- `def price` / `def price=` — trattati per intero nella prossima sezione; è il pezzo che permette a un form di parlare in euro mentre la colonna sotto resta in centesimi.
 
 ## Una decisione su cui vale la pena soffermarsi: price_cents, non price
 
-Il generator ha scritto `price_cents:integer`, non `price:decimal`, sulla riga di comando — quella formulazione è stata scelta deliberatamente in partenza, ed è la stessa categoria di decisione che l'episodio 1 aveva preso su `Booking` che salva il proprio prezzo invece di leggere `service.price` dal vivo: il denaro gestito come float, o persino come `decimal` ingenuo, prima o poi produce un errore di arrotondamento che si presenta come qualche centesimo di scarto su una fattura, nel momento peggiore possibile. Salvare l'importo come numero intero di centesimi evita del tutto questa categoria di bug — non c'è una parte frazionaria da arrotondare, perché non c'è nessuna frazione. 42,50 $ viene salvato come l'intero `4250`, punto.
+Il generator ha scritto `price_cents:integer`, non `price:decimal`, sulla riga di comando — quella formulazione è stata scelta deliberatamente in partenza, ed è la stessa categoria di decisione che l'episodio 1 aveva preso su `Booking` che salva il proprio prezzo invece di leggere `service.price` dal vivo: il denaro gestito come float, o persino come `decimal` ingenuo, prima o poi produce un errore di arrotondamento che si presenta come qualche centesimo di scarto su una fattura, nel momento peggiore possibile. Salvare l'importo come numero intero di centesimi evita del tutto questa categoria di bug — non c'è una parte frazionaria da arrotondare, perché non c'è nessuna frazione. 42,50 € viene salvato come l'intero `4250`, punto. Anche chiamarla `price_cents` invece di, per esempio, `price_usd_cents` è deliberato — "cents" è l'unità minore dell'euro tanto quanto lo è del dollaro, quindi nulla nella colonna stessa è legato a una valuta particolare; solo il livello di formattazione, trattato più avanti in questo post, sa quale valuta è in uso.
 
-Il costo è che nessuno vuole scrivere "4250" in un form intendendo 42,50 $. Quindi `Service` ottiene un piccolo accessor virtuale — due normali metodi Ruby, non una colonna del database — che traduce i dollari in centesimi e viceversa:
+Il costo è che nessuno vuole scrivere "4250" in un form intendendo 42,50 €. Quindi `Service` ottiene un piccolo accessor virtuale — due normali metodi Ruby, non una colonna del database — che traduce gli euro in centesimi e viceversa:
 
 ```ruby
 def price
@@ -219,7 +219,7 @@ end
 Passando in rassegna entrambi:
 
 - `def price` — legge per la visualizzazione. `price_cents && price_cents / 100.0` usa il `&&` di Ruby per il suo comportamento di short-circuit, non come controllo booleano: se `price_cents` è `nil` (un `Service` nuovo di zecca, non ancora salvato), l'intera espressione va in short-circuit a `nil` senza tentare `nil / 100.0`, che solleverebbe un'eccezione. Se è un intero vero, `&&` valuta e restituisce il lato destro — la divisione. Dividere per `100.0` (un literal float, non `100`) forza Ruby a fare una divisione in virgola mobile invece che una divisione intera, così `4250 / 100.0` dà `42.5`, non `42` troncato.
-- `def price=(value)` — il setter, chiamato automaticamente ogni volta che qualcosa fa `service.price = "42.50"` o, altrettanto automaticamente, ogni volta che un form invia un campo chiamato `price` tramite mass assignment (`Service.new(price: "42.50", ...)`) — Rails chiama il metodo setter per ogni attributo permesso, non gli importa se quel metodo corrisponde a una colonna reale o no. `value.present?` protegge da input vuoto (una stringa vuota da un campo del form svuotato) invece di tentare di convertire `""` in un numero. Quando c'è davvero un valore, `value.to_f * 100` converte in dollari-come-float e moltiplica per 100 per ottenere i centesimi, e `.round` lo riporta a un numero intero — `.to_f` su input utente può produrre cose come `42.499999999999996` per la normale imprecisione della virgola mobile, e `.round` è ciò che ripulisce tutto questo a esattamente `4250` prima che raggiunga mai `price_cents=`.
+- `def price=(value)` — il setter, chiamato automaticamente ogni volta che qualcosa fa `service.price = "42.50"` o, altrettanto automaticamente, ogni volta che un form invia un campo chiamato `price` tramite mass assignment (`Service.new(price: "42.50", ...)`) — Rails chiama il metodo setter per ogni attributo permesso, non gli importa se quel metodo corrisponde a una colonna reale o no. `value.present?` protegge da input vuoto (una stringa vuota da un campo del form svuotato) invece di tentare di convertire `""` in un numero. Quando c'è davvero un valore, `value.to_f * 100` converte in euro-come-float e moltiplica per 100 per ottenere i centesimi, e `.round` lo riporta a un numero intero — `.to_f` su input utente può produrre cose come `42.499999999999996` per la normale imprecisione della virgola mobile, e `.round` è ciò che ripulisce tutto questo a esattamente `4250` prima che raggiunga mai `price_cents=`.
 
 Poiché `price=` è un normale metodo Ruby e non un attributo sostenuto da ActiveRecord, gira immediatamente quando gli attributi vengono assegnati — prima di `save`, prima di qualsiasi validazione. Nel momento in cui `validates :price_cents, ...` gira, `price_cents` è già stato popolato da questo setter. Il campo del form discusso più avanti in questo post è solo `form.text_field :price` — la view non ha mai idea che esistano i centesimi.
 
@@ -319,7 +319,7 @@ Riga per riga:
 - `redirect_to services_path, notice: "Your service is live."` — in caso di successo, un vero redirect HTTP verso l'index (questo è lo stesso pattern Post/Redirect/Get discusso più a fondo nell'episodio 3 di *ai-with-ruby*: reindirizzare dopo una POST che cambia lo stato significa che ricaricare la pagina di risultato non reinvia mai il form). `notice:` salva un messaggio one-time nel `flash` — sopravvive esattamente a un redirect e poi si cancella da solo, il che è come "Your service is live." compare al caricamento della pagina immediatamente successiva e sparisce se ricarichi di nuovo.
 - `render :new, status: :unprocessable_entity` — in caso di fallimento, ri-renderizza lo **stesso** form (nessun redirect da nessuna parte) così `@service` — ora popolato sia con quello che l'utente ha scritto sia con gli errori di validazione ad esso attaccati — può essere mostrato di nuovo con i suoi dati intatti e i problemi specifici evidenziati. `status: :unprocessable_entity` imposta lo status HTTP a 422 invece del 200 di default; il browser renderizza comunque l'HTML in entrambi i casi, ma un 422 dice correttamente a qualsiasi strumento che osserva la risposta (devtools del browser, Turbo, una suite di test) che questo era un invio fallito, non un caricamento di pagina riuscito che per caso contiene un form.
 - `private` — tutto sotto questa riga è chiamabile solo da dentro il controller stesso, non raggiungibile come route.
-- `def service_params` / `params.require(:service).permit(:title, :description, :price, :category_id)` — gli strong parameters di Rails. `params.require(:service)` solleva immediatamente un'eccezione se i dati del form inviati non hanno affatto una chiave `service` di primo livello (una richiesta malformata o mancante), e `.permit(...)` è una allowlist: solo queste quattro chiavi sono permesse; qualsiasi altra cosa presente nei params grezzi della richiesta — incluso, per esempio, uno `user_id` che qualcuno ha provato a iniettare modificando l'HTML del form nel proprio browser prima di inviare — viene silenziosamente rimossa e non raggiunge mai `Service.new`. Nota che questo permette `:price`, non `:price_cents` — il controller parla con la stessa interfaccia rivolta ai dollari del form; non sa nemmeno lui che `price_cents` esiste.
+- `def service_params` / `params.require(:service).permit(:title, :description, :price, :category_id)` — gli strong parameters di Rails. `params.require(:service)` solleva immediatamente un'eccezione se i dati del form inviati non hanno affatto una chiave `service` di primo livello (una richiesta malformata o mancante), e `.permit(...)` è una allowlist: solo queste quattro chiavi sono permesse; qualsiasi altra cosa presente nei params grezzi della richiesta — incluso, per esempio, uno `user_id` che qualcuno ha provato a iniettare modificando l'HTML del form nel proprio browser prima di inviare — viene silenziosamente rimossa e non raggiunge mai `Service.new`. Nota che questo permette `:price`, non `:price_cents` — il controller parla con la stessa interfaccia rivolta agli euro del form; non sa nemmeno lui che `price_cents` esiste.
 
 ## Le routes e i due bottoni placeholder
 
@@ -397,7 +397,7 @@ Entrambi i placeholder `<span>` sono diventati chiamate `link_to`, e le classi `
     </div>
 
     <div>
-      <%= form.label :price, "Price (USD)", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.label :price, "Price (EUR)", class: "block text-sm font-medium text-gray-700" %>
       <%= form.text_field :price, placeholder: "45.00", inputmode: "decimal", class: "mt-1 block w-40 rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
     </div>
 
@@ -416,7 +416,7 @@ Entrambi i placeholder `<span>` sono diventati chiamate `link_to`, e le classi `
   4. `:name` — il metodo **testo**: chiama `.name` per ottenere ciò che viene mostrato a un umano dentro il menu.
   5. `{ prompt: "Choose a category" }` — opzioni per il select stesso; `prompt:` inserisce un'opzione placeholder disabilitata e non selezionata con quel testo, così il menu non finisce silenziosamente per selezionare di default la prima categoria della lista se qualcuno invia senza toccarlo.
   Solo dopo questo quinto argomento appare il normale hash di attributi HTML `class: "..."` — una chiamata a `collection_select` separa sempre "come costruire le opzioni" da "quali attributi HTML mettere sul tag `<select>`" in questo modo.
-- `form.label :price, "Price (USD)", ...` — qui il testo dell'etichetta **è** dato esplicitamente ("Price (USD)"), sovrascrivendo ciò che `humanize` dal nome dell'attributo avrebbe prodotto ("Price"), perché il form deve comunicare la valuta e il nome dell'attributo del modello non ha modo di portarla da solo.
+- `form.label :price, "Price (EUR)", ...` — qui il testo dell'etichetta **è** dato esplicitamente ("Price (EUR)"), sovrascrivendo ciò che `humanize` dal nome dell'attributo avrebbe prodotto ("Price"), perché il form deve comunicare la valuta e il nome dell'attributo del modello non ha modo di portarla da solo.
 - `form.text_field :price, placeholder: "45.00", inputmode: "decimal", ...` — questo è il campo che chiama `Service#price=` all'invio, non `price_cents=` — la view davvero non menziona mai i centesimi da nessuna parte. `inputmode: "decimal"` è un normale attributo HTML (niente di specifico di Rails) che suggerisce alle tastiere mobili di mostrare un tastierino numerico con un punto decimale invece della tastiera alfabetica completa.
 - `form.submit "Publish", ...` — renderizza un `<input type="submit">` con l'etichetta data; `cursor-pointer` è puramente estetico, dato che un bottone submit è cliccabile di default ma i browser non sempre renderizzano il cursore a puntatore su di esso senza che venga detto loro di farlo.
 
@@ -465,7 +465,21 @@ Entrambi i placeholder `<span>` sono diventati chiamate `link_to`, e le classi `
 - `<% if @services.none? %> ... <% else %> ... <% end %>` — `.none?` è una normale query ActiveRecord/Enumerable, vera quando la relation ha zero record. Questo è il messaggio di stato vuoto, mostrato al posto di una pagina vuota senza spiegazione la prima volta che l'app gira senza ancora nessun annuncio.
 - `<% @services.each do |service| %>` — itera la relation caricata in anticipo dal controller. Poiché `Service.includes(:category, :user)` ha già portato ogni categoria e ogni utente in memoria insieme ai servizi stessi, `service.category.name` e `service.user.email_address` dentro questo loop non innescano nessuna query aggiuntiva — questo è il ritorno della chiamata `includes` discussa nella sezione del controller, che atterra qui, nella view, dove l'N+1 altrimenti scatterebbe davvero.
 - `service.category.name`, `service.title`, `service.user.email_address`, `service.description` — normali letture di attributi e associazioni.
-- `number_to_currency(service.price)` — un helper di view di Rails (da `ActionView::Helpers::NumberHelper`) che formatta un numero semplice come valuta: `42.5` diventa `"$42.50"` — il numero corretto di due decimali e il simbolo della valuta, non qualsiasi numero di cifre abbia per caso il float. Questo chiama `service.price`, il lettore virtuale rivolto ai dollari definito sul modello — non `service.price_cents` — quindi il numero sullo schermo è davvero `42.5`, formattato, mai `4250`.
+- `number_to_currency(service.price)` — un helper di view di Rails (da `ActionView::Helpers::NumberHelper`) che formatta un numero semplice come valuta: `42.5` diventa `"€42.50"` — il numero corretto di due decimali e il simbolo della valuta, non qualsiasi numero di cifre abbia per caso il float. Questo chiama `service.price`, il lettore virtuale rivolto agli euro definito sul modello — non `service.price_cents` — quindi il numero sullo schermo è davvero `42.5`, formattato, mai `4250`.
+
+Lasciato completamente senza configurazione, `number_to_currency` usa di default i dollari americani — la valuta di VicinoTe è l'euro, quindi quel default andava sovrascritto una volta, globalmente, invece di passare `unit: "€"` a ogni chiamata:
+
+```yaml
+# config/locales/en.yml
+en:
+  number:
+    currency:
+      format:
+        unit: "€"
+        format: "%u%n"
+```
+
+`unit:` è il simbolo stesso. `format:` è il template che lo posiziona rispetto al numero — `%u` è l'unità, `%n` è il numero formattato, quindi `"%u%n"` significa "simbolo, poi numero, senza spazio," che è ciò che produce `€42.50` invece di `€ 42.50` o `42.50€`. Entrambe le chiamate a `number_to_currency` nell'app — ce n'è solo una, in `index.html.erb` — recepiscono questo automaticamente senza modifiche al punto di chiamata, perché è il default stesso a essersi spostato, non la chiamata.
 
 ## Una trappola solo nelle view: l'errore diceva "price cents"
 
@@ -479,7 +493,7 @@ Price cents can't be blank
 Price cents is not a number
 ```
 
-Tutto il resto si legge naturalmente — "Title can't be blank" — perché Rails deriva l'etichetta leggibile dal nome dell'attributo tramite `humanize`. Ma l'attributo effettivamente validato è `price_cents`, non `price`, quindi è quel nome a essere trapelato nel messaggio. Un utente che compila questo form non ha mai sentito parlare di `price_cents`; il campo del form appena sotto l'errore dice semplicemente "Price (USD)".
+Tutto il resto si legge naturalmente — "Title can't be blank" — perché Rails deriva l'etichetta leggibile dal nome dell'attributo tramite `humanize`. Ma l'attributo effettivamente validato è `price_cents`, non `price`, quindi è quel nome a essere trapelato nel messaggio. Un utente che compila questo form non ha mai sentito parlare di `price_cents`; il campo del form appena sotto l'errore dice semplicemente "Price (EUR)".
 
 La correzione è un override I18n di una riga, non una modifica al modello — la validazione è corretta, solo il suo nome renderizzato era sbagliato:
 
@@ -502,7 +516,7 @@ Un dettaglio che è costato un secondo passaggio: scrivere l'override come `pric
 bin/dev
 ```
 
-Registrati (o accedi), clicca "Offer a service", inserisci un titolo, scegli una categoria, scrivi una descrizione, e un prezzo tipo `42.50`. Invia, e reindirizza a `/services` con "Your service is live." in un banner flash, l'annuncio subito sotto — categoria, titolo, chi l'ha pubblicato, descrizione, e `$42.50`, non `4250`. Disconnettiti e visita `/services` direttamente: è ancora lì, ancora pubblico. Prova `/services/new` da disconnesso e reindirizza all'accesso, come qualsiasi altra pagina protetta. Invia il form con tutto vuoto e compare il messaggio di validazione di ogni campo, in inglese semplice e correttamente maiuscolo, "price_cents" da nessuna parte.
+Registrati (o accedi), clicca "Offer a service", inserisci un titolo, scegli una categoria, scrivi una descrizione, e un prezzo tipo `42.50`. Invia, e reindirizza a `/services` con "Your service is live." in un banner flash, l'annuncio subito sotto — categoria, titolo, chi l'ha pubblicato, descrizione, e `€42.50`, non `4250`. Disconnettiti e visita `/services` direttamente: è ancora lì, ancora pubblico. Prova `/services/new` da disconnesso e reindirizza all'accesso, come qualsiasi altra pagina protetta. Invia il form con tutto vuoto e compare il messaggio di validazione di ogni campo, in inglese semplice e correttamente maiuscolo, "price_cents" da nessuna parte.
 
 ## Cosa viene dopo
 
