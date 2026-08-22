@@ -30,13 +30,68 @@ config/routes.rb                    edit — resource :search
 app/views/chats/new.html.erb        edit — a link to the new search page
 ```
 
-## Why this needs Postgres, not SQLite
+## What "semantic" actually means here
 
-A text embedding is a list of numbers — for the model this episode uses, 1,536 of them — positioned so that pieces of text with similar *meaning* end up as nearby points in that 1,536-dimensional space. "Finding similar messages" becomes "finding the nearest points," which is a real, well-studied computational problem, not something you bolt onto a normal database column.
+Every search built so far on the web works the same way underneath: it looks for the literal characters you typed. SQL's `LIKE '%cooking%'`, Postgres full-text search, `grep` — all of them, dressed up differently, are asking "does this text contain that text?" That question has a hard limit: if the word "cooking" never appears anywhere in a message about roasting a chicken, no amount of cleverness in the matching logic finds it, because the word genuinely isn't there.
 
-[pgvector](https://github.com/pgvector/pgvector) is a PostgreSQL extension that adds a native `vector` column type and the indexing and distance operators needed to search it efficiently. It needs PostgreSQL specifically — it's a Postgres extension, not a gem — and a fairly recent one (13+). The demo app had been running on SQLite since episode 1, so the first real step of this episode wasn't Ruby code at all: setting up a PostgreSQL server with pgvector available, then migrating the app to it.
+An embedding model sidesteps the question entirely by not comparing text to text at all. Given a piece of text, it outputs a fixed-length list of numbers — for the model this episode uses, 1,536 of them — which together act as *coordinates* for that text in a 1,536-dimensional space. The model was trained on an enormous amount of text, and in the process learned which words and phrases tend to show up in similar contexts as which others. "Roast a chicken" and "cooking dinner" get placed near each other in that space not because they share letters, but because the patterns of language around them — recipes, meal prep, kitchens, ovens — overlap heavily across everything the model has read. Two pieces of text end up close together in this space when they mean similar things, close to independently of whether they share a single word.
 
-That part is mostly a one-time environment setup rather than something this post needs to walk line by line (the exact steps depend on how you already run Postgres — Docker, Homebrew, Postgres.app, a managed service). The one thing worth flagging if you hit it: building pgvector from source on macOS with [Postgres.app](https://postgresapp.com) can fail with `clang: error: the clang compiler does not support '-march=native'`, because Postgres.app ships universal binaries (`arm64` + `x86_64` combined) and pgvector's `Makefile` defaults to an architecture-specific optimization flag that doesn't apply to a universal build. The fix, [documented right in the Makefile's own comment](https://github.com/pgvector/pgvector/blob/master/Makefile): `make OPTFLAGS=""` instead of a plain `make`.
+"Search by meaning" then reduces to a question with actual geometry behind it: given the coordinates of a new query, which stored coordinates are *nearest* to it? That's nearest-neighbor search, a genuinely well-studied problem in computer science, unrelated to anything a normal indexed database column does — which is exactly why this episode needs a piece of infrastructure built specifically for it, rather than a clever query against the existing `content` text column.
+
+## Setting up PostgreSQL and pgvector, for real
+
+[pgvector](https://github.com/pgvector/pgvector) is the piece of infrastructure: a PostgreSQL extension that adds a native `vector` column type, plus the indexing and distance operators needed to answer "which stored vectors are nearest to this one" efficiently instead of comparing against every row one at a time. It needs PostgreSQL specifically — it's a Postgres extension, compiled against Postgres's own extension API, not a Ruby gem — and a fairly recent version (13+).
+
+The demo app had been running on SQLite since episode 1, so the actual first step of this episode wasn't Ruby code at all. Here's exactly what that involved, on the machine this was built on (macOS, [Postgres.app](https://postgresapp.com) already running an older PostgreSQL 12 for other projects, kept untouched):
+
+**A second, newer Postgres, side by side with the old one.** Postgres.app supports running several server versions from separate app copies, each on its own port, so nothing about the existing PG12 setup had to change:
+
+```bash
+curl -L -o Postgres-17.dmg \
+  https://github.com/PostgresApp/PostgresApp/releases/download/v2.9.5/Postgres-2.9.5-17.dmg
+hdiutil attach Postgres-17.dmg -nobrowse -mountpoint ./mnt
+cp -R ./mnt/Postgres.app /Applications/Postgres17.app
+hdiutil detach ./mnt
+
+/Applications/Postgres17.app/Contents/Versions/17/bin/initdb \
+  -D "$HOME/Library/Application Support/Postgres/var-17" -U "$(whoami)" -E UTF8
+```
+
+`initdb` creates a brand-new, empty PostgreSQL data directory — a fresh server, entirely separate from the PG12 one already in use, listening on a different port (`5433` here, chosen only because `5432` was already taken by the old one) once started.
+
+**Building pgvector against it.** Not a gem install — pgvector is C code compiled directly against the target Postgres installation's headers:
+
+```bash
+export PATH="/Applications/Postgres17.app/Contents/Versions/17/bin:$PATH"
+git clone --depth 1 https://github.com/pgvector/pgvector.git
+cd pgvector
+make OPTFLAGS=""
+make install
+```
+
+The first attempt here used a plain `make`, and failed immediately:
+
+```
+clang: error: the clang compiler does not support '-march=native'
+```
+
+pgvector's `Makefile` defaults to `OPTFLAGS = -march=native`, an architecture-specific CPU optimization flag. Postgres.app ships **universal binaries** — a single build containing both `arm64` and `x86_64` code — and `-march=native` doesn't mean anything for a build that isn't targeting one specific architecture, so Apple's clang refuses it outright. [The Makefile's own comment documents the fix](https://github.com/pgvector/pgvector/blob/master/Makefile): `make OPTFLAGS=""`, which was the version that actually built cleanly and installed the extension's files into the new Postgres's own `share/postgresql/extension` directory.
+
+**Confirming it actually works**, before writing a single line of Rails code, on a disposable database:
+
+```bash
+createdb -p 5433 pgvector_test
+psql -p 5433 -d pgvector_test -c "CREATE EXTENSION vector; SELECT extversion FROM pg_extension WHERE extname='vector';"
+```
+
+```
+ extversion
+------------
+ 0.8.6
+(1 row)
+```
+
+Only once that came back clean did the actual Rails-side migration in the rest of this post begin. If you already run Postgres 13+ with pgvector available — Docker, Homebrew, a managed database — none of the above applies to you at all; it's specific to getting there on a Mac running Postgres.app with an older server already in use, included here because "it depends on your setup" would have skipped over a real afternoon of debugging a compiler error that has nothing to do with Rails, RubyLLM, or Ruby.
 
 ## Switching the database
 
