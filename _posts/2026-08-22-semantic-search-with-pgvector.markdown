@@ -13,7 +13,7 @@ image: /assets/images/ai-with-ruby-banner.png
 
 [Episode 4]({% post_url 2026-08-19-streaming-responses-with-turbo-streams %}) made the reply type itself in live. This episode does something different with the same conversation history: search it by *meaning*, not by matching words. Ask for "cooking dinner" and get back the message where the assistant explained how to roast a chicken, even though the word "cooking" never appears in it.
 
-This is the episode the series has been setting up for since [episode 1]({% post_url 2026-08-06-introduction-to-rubyllm %}), which chose PostgreSQL specifically so this would be possible later without a database migration mid-series. Today is that later. Code is tagged [`episode-5`](https://github.com/AntoninoScaffidi/ai-with-ruby-demo/tree/episode-5) in the [ai-with-ruby-demo](https://github.com/AntoninoScaffidi/ai-with-ruby-demo) repo. As always, nothing here is left unexplained — including two real errors hit building it, with the exact messages and fixes.
+This series' sibling project, [VicinoTe]({% post_url 2026-08-08-vicinote-project-setup-and-domain %}), chose PostgreSQL from its very first episode specifically because it knew an AI module with semantic search was coming later. `ai-with-ruby-demo` didn't get that same foresight — it's been on SQLite, Rails 8's own default, since [episode 2]({% post_url 2026-08-07-wiring-rubyllm-into-rails %}), because nothing up to this point needed anything else. This is the episode where that catches up, paying now the migration cost VicinoTe avoided by planning ahead. Code is tagged [`episode-5`](https://github.com/AntoninoScaffidi/ai-with-ruby-demo/tree/episode-5) in the [ai-with-ruby-demo](https://github.com/AntoninoScaffidi/ai-with-ruby-demo) repo. As always, nothing here is left unexplained — including two real errors hit building it, with the exact messages and fixes.
 
 ## What this episode touches, at a glance
 
@@ -42,7 +42,17 @@ An embedding model sidesteps the question entirely by not comparing text to text
 
 [pgvector](https://github.com/pgvector/pgvector) is the piece of infrastructure: a PostgreSQL extension that adds a native `vector` column type, plus the indexing and distance operators needed to answer "which stored vectors are nearest to this one" efficiently instead of comparing against every row one at a time. It needs PostgreSQL specifically — it's a Postgres extension, compiled against Postgres's own extension API, not a Ruby gem — and a fairly recent version (13+).
 
-The demo app had been running on SQLite since episode 1, so the actual first step of this episode wasn't Ruby code at all. Here's exactly what that involved, on the machine this was built on (macOS, [Postgres.app](https://postgresapp.com) already running an older PostgreSQL 12 for other projects, kept untouched):
+The demo app had been running on SQLite since episode 2, so the actual first step of this episode wasn't Ruby code at all — it was deciding whether to keep SQLite or switch, and then acting on that.
+
+**Why migrate at all, instead of staying on SQLite?** It's not that SQLite is structurally incapable of this — an extension called [`sqlite-vec`](https://github.com/asg017/sqlite-vec) does roughly the same job pgvector does, for SQLite. Three reasons tipped this toward Postgres specifically, though:
+
+1. **It's what the sibling project already proved out.** VicinoTe's own first episode chose PostgreSQL from day one for exactly this reason — so that adding `pgvector` later, when its own AI module arrives, needs no database migration at all. This app didn't get that same foresight (SQLite was just Rails 8's own default, picked without semantic search in view yet), so it's paying that migration cost now instead of never — but the underlying lesson is the same one either way: know what a project will eventually need, and it's cheaper to build on the right foundation from the start than to migrate onto it later.
+2. **pgvector is the ecosystem default.** It's older, far more widely deployed, and the thing nearly every Rails + AI tutorial, gem README, and managed-database "add vector search" button assumes. Code and advice written against pgvector transfers directly to a real production setup; `sqlite-vec` is newer and less universally supported by the surrounding tooling.
+3. **Production Rails apps mostly run Postgres already.** A demo that migrates to Postgres for this feature is closer to what deploying this for real would actually look like than one that stayed on SQLite specifically to dodge a migration.
+
+None of that makes `sqlite-vec` a wrong choice in general — for a project committed to staying on SQLite for other reasons, it's a legitimate way to get the same capability. It just wasn't the better fit here, once a sibling project in this same blog had already shown what planning ahead for it looks like.
+
+Here's exactly what the Postgres switch involved, on the machine this was built on (macOS, [Postgres.app](https://postgresapp.com) already running an older PostgreSQL 12 for other projects, kept untouched):
 
 **A second, newer Postgres, side by side with the old one.** Postgres.app supports running several server versions from separate app copies, each on its own port, so nothing about the existing PG12 setup had to change:
 
@@ -130,7 +140,7 @@ production:
     migrations_paths: db/cable_migrate
 ```
 
-The shape is identical to the SQLite version from episode 1 — same three environments, same production split into `primary`/`cache`/`queue`/`cable` for the Solid trio — only `adapter:` and the connection details changed. `port: 5433` is specific to how Postgres happens to be running on the machine this was built on (a second server, alongside an existing one on the default `5432`, so the two don't conflict) — the number itself isn't meaningful, only that it has to match wherever your own Postgres is actually listening.
+The shape is identical to the SQLite version from episode 2 — same three environments, same production split into `primary`/`cache`/`queue`/`cable` for the Solid trio — only `adapter:` and the connection details changed. `port: 5433` is specific to how Postgres happens to be running on the machine this was built on (a second server, alongside an existing one on the default `5432`, so the two don't conflict) — the number itself isn't meaningful, only that it has to match wherever your own Postgres is actually listening.
 
 ```ruby
 # Gemfile
@@ -145,7 +155,7 @@ bundle install
 bin/rails db:create db:migrate
 ```
 
-`db:create` makes the (empty) `ai_with_ruby_demo_development` and `_test` databases from scratch — this is a fresh Postgres server, so there's no data to migrate over from the old SQLite files, only the schema. `db:migrate` replays every migration from episodes 3 and 4 (conversations, messages, tool_calls, models, the foreign keys between them) against the new database, ending in exactly the same shape SQLite had.
+`db:create` makes the (empty) `ai_with_ruby_demo_development` and `_test` databases from scratch — this is a fresh Postgres server, so there's no data to migrate over from the old SQLite files, only the schema. `db:migrate` replays every migration from episode 3 (conversations, messages, tool_calls, models, the foreign keys between them — episode 4 added no schema changes of its own) against the new database, ending in exactly the same shape SQLite had.
 
 ## Enabling pgvector
 
