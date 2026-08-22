@@ -8,7 +8,7 @@ ref: semantic-search-with-pgvector
 permalink: /semantic-search-with-pgvector/
 canonical_url: https://antoninoscaffidi.github.io/it/semantic-search-with-pgvector/
 date: 2026-08-22 07:00:00 +0200
-image: /assets/images/ai-with-ruby-banner.png
+image: /assets/images/ai-with-ruby-ep5-banner.png
 ---
 
 L'[episodio 4]({% post_url 2026-08-19-streaming-responses-with-turbo-streams %}) aveva fatto scrivere la risposta da sola, in diretta. Questo episodio fa qualcosa di diverso con la stessa cronologia delle conversazioni: cercarla per **significato**, non per corrispondenza di parole. Chiedi "cucinare la cena" e ottieni indietro il messaggio in cui l'assistente ha spiegato come arrostire un pollo, anche se la parola "cucinare" non compare mai al suo interno.

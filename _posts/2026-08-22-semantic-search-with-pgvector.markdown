@@ -8,7 +8,7 @@ ref: semantic-search-with-pgvector
 permalink: /semantic-search-with-pgvector/
 canonical_url: https://antoninoscaffidi.github.io/semantic-search-with-pgvector/
 date: 2026-08-22 07:00:00 +0200
-image: /assets/images/ai-with-ruby-banner.png
+image: /assets/images/ai-with-ruby-ep5-banner.png
 ---
 
 [Episode 4]({% post_url 2026-08-19-streaming-responses-with-turbo-streams %}) made the reply type itself in live. This episode does something different with the same conversation history: search it by *meaning*, not by matching words. Ask for "cooking dinner" and get back the message where the assistant explained how to roast a chicken, even though the word "cooking" never appears in it.
