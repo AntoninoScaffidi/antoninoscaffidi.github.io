@@ -52,46 +52,17 @@ L'app demo girava su SQLite dall'episodio 2, quindi il vero primo passo di quest
 
 Niente di tutto ciò rende `sqlite-vec` una scelta sbagliata in generale — per un progetto impegnato a restare su SQLite per altri motivi, è un modo legittimo di ottenere la stessa capacità. Semplicemente non era l'adattamento migliore qui, una volta che un progetto gemello dello stesso blog aveva già mostrato cosa significa pianificare in anticipo per questo.
 
-Ecco esattamente cosa ha comportato il passaggio a Postgres, sulla macchina su cui è stato costruito questo (macOS, [Postgres.app](https://postgresapp.com) già in esecuzione con un PostgreSQL 12 più vecchio per altri progetti, lasciato intatto):
+Procurarsi un vero server PostgreSQL 13+ con pgvector disponibile è l'unico passo di questo episodio che dipende davvero dal tuo setup — non esiste un unico modo canonico di farlo, quindi invece di raccontare il percorso di una macchina specifica come se fosse universale, ecco le opzioni reali:
 
-**Un secondo Postgres, più recente, accanto a quello vecchio.** Postgres.app supporta l'esecuzione di più versioni del server da copie separate dell'app, ognuna sulla propria porta, quindi nulla della configurazione PG12 esistente ha dovuto cambiare:
+- **Docker** — l'immagine [`pgvector/pgvector`](https://hub.docker.com/r/pgvector/pgvector) è un normale Postgres con l'estensione già compilata dentro.
+- **Un package manager** — la maggior parte delle distribuzioni Linux e Homebrew hanno un pacchetto `pgvector` (o `postgresql-<versione>-pgvector`) che lo installa accanto a un Postgres che hai già.
+- **Un database gestito** (Supabase, Neon, RDS, e quasi tutti gli altri) — di solito un interruttore "extensions" nella dashboard con un clic, nessuna compilazione coinvolta.
+- **Compilare da sorgente** — per tutto ciò che non rientra sopra: `git clone` del [repo pgvector](https://github.com/pgvector/pgvector), poi `make && make install` contro il `pg_config` del Postgres di destinazione.
 
-```bash
-curl -L -o Postgres-17.dmg \
-  https://github.com/PostgresApp/PostgresApp/releases/download/v2.9.5/Postgres-2.9.5-17.dmg
-hdiutil attach Postgres-17.dmg -nobrowse -mountpoint ./mnt
-cp -R ./mnt/Postgres.app /Applications/Postgres17.app
-hdiutil detach ./mnt
-
-/Applications/Postgres17.app/Contents/Versions/17/bin/initdb \
-  -D "$HOME/Library/Application Support/Postgres/var-17" -U "$(whoami)" -E UTF8
-```
-
-`initdb` crea una directory dati PostgreSQL nuova di zecca e vuota — un server fresco, del tutto separato da quello PG12 già in uso, in ascolto su una porta diversa (`5433` qui, scelta solo perché `5432` era già occupata da quello vecchio) una volta avviato.
-
-**Compilare pgvector contro di esso.** Non un'installazione di gemma — pgvector è codice C compilato direttamente contro gli header dell'installazione Postgres di destinazione:
+Qualunque strada ci porti, lo stesso controllo di una riga conferma che ha davvero funzionato, prima di scrivere una sola riga di codice Rails:
 
 ```bash
-export PATH="/Applications/Postgres17.app/Contents/Versions/17/bin:$PATH"
-git clone --depth 1 https://github.com/pgvector/pgvector.git
-cd pgvector
-make OPTFLAGS=""
-make install
-```
-
-Il primo tentativo qui ha usato un semplice `make`, ed è fallito immediatamente:
-
-```
-clang: error: the clang compiler does not support '-march=native'
-```
-
-Il `Makefile` di pgvector usa di default `OPTFLAGS = -march=native`, un flag di ottimizzazione CPU specifico per architettura. Postgres.app distribuisce **binari universali** — un'unica build che contiene sia codice `arm64` che `x86_64` — e `-march=native` non significa nulla per una build che non punta a un'architettura specifica, quindi il clang di Apple lo rifiuta categoricamente. [Il commento del Makefile stesso documenta la correzione](https://github.com/pgvector/pgvector/blob/master/Makefile): `make OPTFLAGS=""`, che è stata la versione che ha davvero compilato senza problemi e installato i file dell'estensione nella directory `share/postgresql/extension` del nuovo Postgres.
-
-**Confermare che funzioni davvero**, prima di scrivere una sola riga di codice Rails, su un database usa e getta:
-
-```bash
-createdb -p 5433 pgvector_test
-psql -p 5433 -d pgvector_test -c "CREATE EXTENSION vector; SELECT extversion FROM pg_extension WHERE extname='vector';"
+psql -c "CREATE EXTENSION vector; SELECT extversion FROM pg_extension WHERE extname='vector';"
 ```
 
 ```
@@ -101,7 +72,7 @@ psql -p 5433 -d pgvector_test -c "CREATE EXTENSION vector; SELECT extversion FRO
 (1 row)
 ```
 
-Solo dopo che questo è tornato pulito è iniziata la vera migrazione lato Rails nel resto di questo post. Se già usi Postgres 13+ con pgvector disponibile — Docker, Homebrew, un database gestito — niente di quanto sopra ti riguarda affatto; è specifico ad arrivarci su un Mac che gira Postgres.app con un server più vecchio già in uso, incluso qui perché "dipende dal tuo setup" avrebbe saltato un vero pomeriggio passato a fare debug di un errore del compilatore che non ha nulla a che fare con Rails, RubyLLM, o Ruby.
+Una cosa ristretta da segnalare, solo perché non ha nulla a che fare con Rails e sarebbe difficile da cercare: compilare da sorgente su **macOS con [Postgres.app](https://postgresapp.com) nello specifico** può fallire con `clang: error: the clang compiler does not support '-march=native'`. Postgres.app distribuisce binari universali (`arm64` + `x86_64` combinati), e il `Makefile` di pgvector usa di default un flag di ottimizzazione specifico per architettura che non si applica a una build universale, quindi clang lo rifiuta categoricamente. [La correzione è una riga sola, documentata proprio nel commento del Makefile stesso](https://github.com/pgvector/pgvector/blob/master/Makefile): `make OPTFLAGS=""` invece di un semplice `make`. Se non è esattamente la tua combinazione, questo paragrafo non ti riguarda affatto.
 
 ## Cambiare database
 
