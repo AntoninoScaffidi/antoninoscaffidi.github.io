@@ -8,7 +8,7 @@ ref: vicinote-booking-a-service
 permalink: /vicinote-booking-a-service/
 canonical_url: https://antoninoscaffidi.github.io/it/vicinote-booking-a-service/
 date: 2026-08-28 05:00:00 +0200
-image: /assets/images/vicinote-banner.png
+image: /assets/images/vicinote-ep4-banner.png
 ---
 
 L'[episodio 3]({% post_url 2026-08-20-vicinote-services-and-categories %}) aveva portato un utente autenticato al punto di elencare qualcosa che offre. Nessuno però poteva davvero prenotarlo — non esisteva una pagina per il singolo servizio, né un record dell'accordo tra due persone. Questo episodio chiude entrambe le lacune: `Service` ottiene finalmente una pagina `show`, e un nuovo modello `Booking` è il record di un utente che accetta di pagare un altro per qualcosa, in un giorno specifico, a un prezzo specifico.
