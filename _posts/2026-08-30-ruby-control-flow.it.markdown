@@ -7,7 +7,7 @@ lang: it
 ref: ruby-control-flow
 permalink: /ruby-control-flow/
 canonical_url: https://antoninoscaffidi.github.io/it/ruby-control-flow/
-image: /assets/images/ruby-deep-dive-banner.png
+image: /assets/images/ruby-deep-dive-ep2-banner.png
 date: 2026-08-30 09:00:00 +0200
 ---
 
