@@ -27,7 +27,7 @@ This produced some genuinely strange writing. Pages would repeat a phrase five o
 
 **BERT**, in 2019, went further into the mechanics of language itself. Earlier systems mostly read a query as a loose collection of important words, tending to ignore small connective words like "to," "for," or "not" as noise. BERT reads words *in relation to the words around them*, in both directions at once — which is exactly why a preposition can flip the meaning of a whole sentence, and now flips the results too. "2019 brazil traveler to usa need a visa" means something different from "2019 usa traveler to brazil need a visa" — same words, different order, opposite intent — and that's precisely the kind of distinction earlier keyword matching wasn't built to catch.
 
-More recently, **AI Overviews** (built on models in the MUM/Gemini family) go a step further still: for many queries, the search results page now includes an AI-generated summary synthesized *across multiple sources*, before a single blue link appears. The engine isn't just ranking pages that match a query anymore — it's reading several of them, extracting what's relevant to the specific question, and writing an answer. Ranking well increasingly means being one of the sources judged worth synthesizing from, not just one of the ten blue links.
+More recently, **AI Overviews**, and now **AI Mode** — which Google confirmed at I/O 2026 is no longer experimental, running on the Gemini 3.5 Flash model globally, with 2.5 billion monthly users across 200+ countries — go a step further still: for many queries, the results page now includes an AI-generated answer synthesized *across multiple sources*, before a single blue link appears. The engine isn't just ranking pages that match a query anymore — it's reading several of them, extracting what's relevant to the specific question, and writing an answer, complete with inline citations back to the sources it drew from. Ranking well increasingly means being one of the sources judged worth synthesizing from, not just one of the ten blue links.
 
 ## What "semantic" actually means, concretely
 
@@ -43,9 +43,9 @@ Old-style, keyword-driven writing, aimed at "local food tour in Florence," might
 
 Every sentence exists to repeat the phrase, not to say anything new. A semantically-written version covering the same topic reads like a person who actually knows the subject:
 
-> Skip the tourist-trap trattorias lining Via dei Calzaiuoli. This walk starts at the Sant'Ambrogio market, still shopped daily by Florentine households, and works through five family-run stops: a lampredotto cart that's held the same corner since the 1980s, a wine bar pouring only Chianti from small producers within 20km, and a pastry counter where the ricciarelli come out of the oven each morning. Small groups, a Florence-born guide, no bus, no headset.
+> Skip the tourist-trap trattorias lining Via dei Calzaiuoli. This walk starts at the Sant'Ambrogio market, Florence's oldest, still shopped daily by Florentine households since 1873, and works through five family-run stops: a lampredotto cart run by the same family for three generations, a wine bar pouring only Chianti from small producers within 20km, and a bakery counter where the bomboloni come out of the fryer each morning. Small groups, a Florence-born guide, no bus, no headset.
 
-The second version never repeats "local food tour in Florence" verbatim, not even once — and it's the one a modern search engine is built to reward, because it actually demonstrates understanding of the topic: Sant'Ambrogio market, family-run, lampredotto, small producers, a local guide. Those aren't synonyms inserted to game a system; they're the vocabulary someone with real expertise on the subject would naturally use, and that concentration of related, accurate terminology is itself a strong signal of genuine topical depth — the thing modern search is actually trying to measure.
+The second version never repeats "local food tour in Florence" verbatim, not even once — and it's the one a modern search engine is built to reward, because it actually demonstrates understanding of the topic: Sant'Ambrogio market, family-run, lampredotto, small producers, a local guide. Those aren't synonyms inserted to game a system; they're the vocabulary someone with real expertise on the subject would naturally use, and that concentration of related, accurate terminology is itself a strong signal of genuine topical depth — the thing modern search is actually trying to measure. (The market's 1873 founding and the lampredottaio tradition of stalls passed down through generations are both real, documented Florence history, not invented color for this example — see Sources below.)
 
 ## What this means in practice
 
@@ -54,6 +54,14 @@ None of this means keywords stopped mattering entirely — a page about a Floren
 - **Answer the actual question, directly and early**, the way a knowledgeable person would answer it out loud — not after three paragraphs of preamble.
 - **Cover the topic's natural surrounding vocabulary** (family-run, neighborhood market, small producer, local guide — not just "local food tour Florence" repeated), because that vocabulary is what demonstrates real depth to both a human reader and an embedding-based ranking system.
 - **Structure content so each section answers one clear sub-question** — this maps naturally onto how a search engine (and increasingly, an AI Overview) extracts a specific relevant passage from a longer page, rather than needing the whole page to match a whole query.
+
+## Sources
+
+- [A Guide to Google Search Ranking Systems](https://developers.google.com/search/docs/appearance/ranking-systems-guide) — Google's own official documentation of RankBrain, BERT, Neural matching, and the other systems mentioned above.
+- [Understanding searches better than ever before](https://blog.google/products-and-platforms/products/search/search-language-understanding-bert/) — Google's official announcement of BERT, October 25, 2019.
+- [Google Search's I/O 2026 updates: AI agents and more](https://blog.google/products-and-platforms/products/search/search-io-2026/) — Google's own announcement confirming AI Mode's global, non-experimental rollout on Gemini 3.5 Flash.
+- [Google Search: A timeline of the 25 biggest moments](https://blog.google/products-and-platforms/products/search/25-biggest-google-search-updates/) — Google's own retrospective covering Hummingbird (2013) and RankBrain (2015).
+- [Mercato di Sant'Ambrogio — official site](https://mercatosantambrogio.it/?lang=en) and [Lampredotto Florence: history of a working-class food](https://homelink-tuscany.com/de-medici/en/guida-al-territorio/lampredotto-firenze-storia/) — sources for the market's 1873 founding and the multi-generation lampredottaio tradition used in this episode's writing example.
 
 ## What's next
 
