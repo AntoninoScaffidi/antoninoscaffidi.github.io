@@ -19,6 +19,13 @@ ruby-deep-dive:
   description:
     en: "A from-scratch look at the Ruby language itself, not a framework — with hands-on exercises for every episode."
     it: "Uno sguardo da zero al linguaggio Ruby in sé, non a un framework — con esercizi pratici per ogni episodio."
+semantic-seo:
+  name:
+    en: "Semantic SEO"
+    it: "SEO Semantica"
+  description:
+    en: "Beyond the keyword: how search engines actually rank content today, for anyone who writes online."
+    it: "Oltre la keyword: come i motori di ricerca posizionano davvero i contenuti oggi, per chiunque scriva online."
 whatsapp-with-rails:
   name:
     en: "WhatsApp with Rails"
