@@ -11,7 +11,7 @@ image: /assets/images/nexi-xpay-ep1-banner.png
 date: 2026-09-13 07:00:00 +0200
 ---
 
-Questo è il primo episodio di una nuova serie: integrare [Nexi XPay](https://ecommerce.nexi.it/specifiche-tecniche/) — uno dei gateway di pagamento con carta più comuni per gli esercenti italiani — in un'app Ruby on Rails, da zero, dall'inizio alla fine. Tutto in questa serie è verificato contro un vero ambiente sandbox Nexi, incluso un vero pagamento di prova andato a buon fine.
+Questo è il primo episodio di una nuova serie: integrare [Nexi XPay](https://ecommerce.nexi.it/specifiche-tecniche/) — uno dei gateway di pagamento con carta più comuni per gli esercenti italiani — in un'app Ruby on Rails, da zero, dall'inizio alla fine. Tutto in questa serie è verificato su un vero ambiente sandbox Nexi, incluso un vero pagamento di prova andato a buon fine.
 
 Il codice è nel repo [nexi-xpay-with-rails](https://github.com/AntoninoScaffidi/nexi-xpay-with-rails), taggato [`episode-1`](https://github.com/AntoninoScaffidi/nexi-xpay-with-rails/tree/episode-1). Questo episodio porta un cliente da "clicca compra" alla pagina di pagamento di Nexi, con il prezzo letto dal database, mai da ciò che manda il browser.
 

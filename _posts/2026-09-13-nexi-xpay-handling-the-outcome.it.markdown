@@ -185,4 +185,4 @@ bin/rails test
 
 ## Cosa viene dopo
 
-L'[episodio 3]({% post_url 2026-09-13-nexi-xpay-testing-and-going-to-production %}) fa girare tutto il flusso contro la vera sandbox di Nexi dall'inizio alla fine — un tunnel pubblico con ngrok, un vero pagamento con carta di test, e la notifica che arriva da sola, senza alcun intervento — più cosa manca ancora prima di passare in produzione.
+L'[episodio 3]({% post_url 2026-09-13-nexi-xpay-testing-and-going-to-production %}) fa girare tutto il flusso sulla vera sandbox di Nexi dall'inizio alla fine — un tunnel pubblico con ngrok, un vero pagamento con carta di test, e la notifica che arriva da sola, senza alcun intervento — più cosa manca ancora prima di passare in produzione.

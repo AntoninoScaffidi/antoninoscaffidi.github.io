@@ -11,13 +11,13 @@ image: /assets/images/nexi-xpay-ep3-banner.png
 date: 2026-09-13 08:00:00 +0200
 ---
 
-L'[episodio 1]({% post_url 2026-09-13-nexi-xpay-setup-and-initiating-a-payment %}) ha costruito il lato della richiesta, l'[episodio 2]({% post_url 2026-09-13-nexi-xpay-handling-the-outcome %}) il lato della risposta. 19 test automatici passano, e nessuno di essi tocca davvero la rete — che è esattamente il punto di una suite di test, ma significa anche che nessuno di essi dimostra davvero che i server reali di Nexi accettino ciò che questa app gli manda. Questo episodio chiude quel divario: un pagamento vero, contro la vera sandbox, con il webhook che arriva da solo.
+L'[episodio 1]({% post_url 2026-09-13-nexi-xpay-setup-and-initiating-a-payment %}) ha costruito il lato della richiesta, l'[episodio 2]({% post_url 2026-09-13-nexi-xpay-handling-the-outcome %}) il lato della risposta. 19 test automatici passano, e nessuno di essi tocca davvero la rete — che è esattamente il punto di una suite di test, ma significa anche che nessuno di essi dimostra davvero che i server reali di Nexi accettino ciò che questa app gli manda. Questo episodio chiude quel divario: un pagamento vero, sulla vera sandbox, con il webhook che arriva da solo.
 
 Il codice è taggato [`episode-3`](https://github.com/AntoninoScaffidi/nexi-xpay-with-rails/tree/episode-3) nel repo [nexi-xpay-with-rails](https://github.com/AntoninoScaffidi/nexi-xpay-with-rails) — questo episodio è più leggero sul nuovo codice applicativo e più pesante sul processo, dato che testare e verificare sono l'argomento vero e proprio.
 
 ## Perché la sola suite di test non basta
 
-Ogni test scritto nei due episodi precedenti costruisce il proprio MAC usando la `mac_key` dell'app stessa e verifica che l'app sappia validare la propria firma — un controllo reale e significativo, ma un circuito chiuso. Dimostra che l'*algoritmo* è implementato correttamente; non dice nulla su se i server di Nexi calcolino per caso lo stesso identico algoritmo allo stesso modo per la *tua* specifica configurazione di terminale, se il tuo alias sandbox funzioni davvero, o se una notifica possa davvero raggiungere il tuo server dall'esterno. Queste cose si confermano solo con un'esecuzione end-to-end contro la cosa vera.
+Ogni test scritto nei due episodi precedenti costruisce il proprio MAC usando la `mac_key` dell'app stessa e verifica che l'app sappia validare la propria firma — un controllo reale e significativo, ma un circuito chiuso. Dimostra che l'*algoritmo* è implementato correttamente; non dice nulla su se i server di Nexi calcolino per caso lo stesso identico algoritmo allo stesso modo per la *tua* specifica configurazione di terminale, se il tuo alias sandbox funzioni davvero, o se una notifica possa davvero raggiungere il tuo server dall'esterno. Queste cose si confermano solo con un'esecuzione end-to-end sul sistema vero.
 
 ## Nexi non può raggiungere `localhost`
 
