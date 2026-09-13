@@ -19,6 +19,13 @@ ruby-deep-dive:
   description:
     en: "A from-scratch look at the Ruby language itself, not a framework — with hands-on exercises for every episode."
     it: "Uno sguardo da zero al linguaggio Ruby in sé, non a un framework — con esercizi pratici per ogni episodio."
+nexi-xpay-with-rails:
+  name:
+    en: "Nexi XPay with Rails"
+    it: "Nexi XPay con Rails"
+  description:
+    en: "Integrating Nexi XPay's hosted payment page into a Ruby on Rails app, end to end — verified with a real sandbox payment."
+    it: "Integrare la pagina di pagamento hosted di Nexi XPay in un'app Ruby on Rails, dall'inizio alla fine — verificata con un pagamento reale in sandbox."
 semantic-seo:
   name:
     en: "Semantic SEO"
