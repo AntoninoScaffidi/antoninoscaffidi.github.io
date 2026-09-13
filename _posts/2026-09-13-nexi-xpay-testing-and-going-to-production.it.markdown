@@ -105,4 +105,4 @@ Nessuna di queste cambia come funziona il flusso principale — sono ciò che se
 
 ## Per concludere
 
-Tre episodi, un'app Rails piccola ma completa: un checkout che non si fida mai di un prezzo dal client, un gateway di pagamento che firma ciò che manda e verifica ciò che riceve, un webhook che sopravvive ai tentativi ripetuti, e una suite di test più un'esecuzione reale in sandbox a garantire tutto questo. Se stai integrando XPay tu stesso, il [repo completo](https://github.com/AntoninoScaffidi/nexi-xpay-with-rails) è lì da clonare, leggere e adattare.
+Tre episodi, un'app Rails piccola ma completa: un checkout che non si fida mai di un prezzo dal client, un gateway di pagamento che firma ciò che manda e verifica ciò che riceve, un webhook idempotente che non rielabora mai due volte la stessa notifica, e una suite di test più un'esecuzione reale in sandbox a garantire tutto questo. Se stai integrando XPay tu stesso, il [repo completo](https://github.com/AntoninoScaffidi/nexi-xpay-with-rails) è lì da clonare, leggere e adattare.

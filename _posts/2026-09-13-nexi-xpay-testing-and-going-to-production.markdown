@@ -105,4 +105,4 @@ None of these change how the core flow works — they're what separates "this co
 
 ## Wrapping up
 
-Three episodes, one small but complete Rails app: a checkout that never trusts a price from the client, a payment gateway that signs what it sends and verifies what it receives, a webhook that survives being retried, and a test suite plus a real sandbox run standing behind all of it. If you're integrating XPay yourself, the [full repo](https://github.com/AntoninoScaffidi/nexi-xpay-with-rails) is there to clone, read, and adapt.
+Three episodes, one small but complete Rails app: a checkout that never trusts a price from the client, a payment gateway that signs what it sends and verifies what it receives, an idempotent webhook that never double-processes the same notification, and a test suite plus a real sandbox run standing behind all of it. If you're integrating XPay yourself, the [full repo](https://github.com/AntoninoScaffidi/nexi-xpay-with-rails) is there to clone, read, and adapt.
