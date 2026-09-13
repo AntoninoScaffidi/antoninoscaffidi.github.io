@@ -185,4 +185,4 @@ bin/rails test
 
 ## What's next
 
-Episode 3 runs the whole thing against Nexi's real sandbox end to end — a public tunnel with ngrok, an actual test-card payment, and the notification arriving on its own, unprompted — plus what's still missing before flipping this to production.
+[Episode 3]({% post_url 2026-09-13-nexi-xpay-testing-and-going-to-production %}) runs the whole thing against Nexi's real sandbox end to end — a public tunnel with ngrok, an actual test-card payment, and the notification arriving on its own, unprompted — plus what's still missing before flipping this to production.

@@ -258,4 +258,4 @@ La suite di test (11 test a questo punto) copre le due cose di cui vale più la 
 
 ## Cosa viene dopo
 
-L'episodio 2 copre i due canali che Nexi usa per comunicare cosa è successo — un redirect del browser (solo UX) e un webhook server-to-server (la vera fonte di verità) — la verifica del MAC al ritorno, e i bug veri incontrati costruendolo.
+L'[episodio 2]({% post_url 2026-09-13-nexi-xpay-handling-the-outcome %}) copre i due canali che Nexi usa per comunicare cosa è successo — un redirect del browser (solo UX) e un webhook server-to-server (la vera fonte di verità) — la verifica del MAC al ritorno, e i bug veri incontrati costruendolo.

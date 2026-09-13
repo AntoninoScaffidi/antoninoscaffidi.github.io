@@ -258,4 +258,4 @@ The test suite (11 tests at this point) covers the two things most worth trustin
 
 ## What's next
 
-Episode 2 covers the two channels Nexi uses to tell you what happened — a browser redirect (UX only) and a server-to-server webhook (the actual source of truth) — MAC verification on the way back in, and the real bugs hit building it.
+[Episode 2]({% post_url 2026-09-13-nexi-xpay-handling-the-outcome %}) covers the two channels Nexi uses to tell you what happened — a browser redirect (UX only) and a server-to-server webhook (the actual source of truth) — MAC verification on the way back in, and the real bugs hit building it.
