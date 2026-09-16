@@ -8,7 +8,7 @@ ref: stripe-setup-and-initiating-a-payment
 permalink: /stripe-setup-and-initiating-a-payment/
 canonical_url: https://antoninoscaffidi.github.io/stripe-setup-and-initiating-a-payment/
 image: /assets/images/stripe-ep1-banner.png
-date: 2026-09-16 21:00:00 +0200
+date: 2026-09-16 20:33:00 +0200
 ---
 
 This is the first episode of a new series: integrating [Stripe](https://stripe.com) — probably the most developer-friendly payment gateway there is — into a Ruby on Rails app, from scratch. If you've just come from [Nexi XPay with Rails]({% post_url 2026-09-13-nexi-xpay-setup-and-initiating-a-payment %}), this series deliberately reuses the same `Product`/`Order` domain, so what's actually different between an in-house European gateway and a modern, developer-first American one stands out clearly, line by line — not buried under two different apps you have to mentally diff yourself.
