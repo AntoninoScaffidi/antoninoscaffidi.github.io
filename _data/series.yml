@@ -40,3 +40,10 @@ whatsapp-with-rails:
   description:
     en: "Sending WhatsApp messages from a Rails app — first via Twilio, then via a direct Meta WhatsApp Cloud API variant for comparison."
     it: "Inviare messaggi WhatsApp da un'app Rails — prima via Twilio, poi con una variante diretta con le API Meta WhatsApp Cloud, per confronto."
+stripe-with-rails:
+  name:
+    en: "Stripe with Rails"
+    it: "Stripe con Rails"
+  description:
+    en: "Integrating Stripe Checkout into a Ruby on Rails app, end to end — from a real payment session to signed webhook events."
+    it: "Integrare Stripe Checkout in un'app Ruby on Rails, dall'inizio alla fine — da una vera sessione di pagamento agli eventi webhook firmati."
